@@ -40,5 +40,8 @@ dotnet run -- --no-browser
 ## 构建单文件
 
 ```powershell
-dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+dotnet publish -p:PublishProfile=Windows-x64
 ```
+
+发布结果位于 `dist\win-x64\Stardom3Assistant.exe`。该版本为 Windows x64
+单文件自包含程序，目标电脑无需另外安装 .NET 运行时。
