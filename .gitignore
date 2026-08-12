@@ -1,0 +1,9 @@
+bin/
+obj/
+build-check/
+dist/
+.tools/
+.artifact-work/
+research/
+drive-folder.html
+trainer-*.zip
