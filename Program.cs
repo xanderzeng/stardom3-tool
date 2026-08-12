@@ -25,7 +25,7 @@ internal static class Program
         app.MapGet("/", () => Results.Content(DashboardHtml.Value, "text/html; charset=utf-8"));
         app.MapGet("/index.html", () => Results.Content(DashboardHtml.Value, "text/html; charset=utf-8"));
 
-        Console.WriteLine("明星志愿3 实时助手（只读模式）");
+        Console.WriteLine("明星志愿3 · 辅助助手（只读模式）");
         Console.WriteLine($"仪表盘：{Url}");
         Console.WriteLine("关闭此窗口即可退出。\n");
 

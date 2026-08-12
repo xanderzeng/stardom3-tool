@@ -7,7 +7,7 @@ internal static class DashboardHtml
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>明星志愿3 · 实时助手</title>
+  <title>明星志愿3 · 辅助助手</title>
   <style>
     :root{color-scheme:dark;--bg:#0d0f16;--panel:#171a25;--panel2:#1d2130;--line:#2b3042;--text:#f4f0e8;--muted:#9da4b8;--gold:#f4c56a;--pink:#ef7fa3;--good:#65d6a8;--blue:#7eb8ff;--base-font:17px}
     *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 18% 0,#28213c 0,transparent 34%),var(--bg);color:var(--text);font:var(--base-font)/1.5 "Microsoft YaHei UI",sans-serif}body[data-font="small"]{--base-font:15px}body[data-font="large"]{--base-font:20px}
@@ -24,7 +24,7 @@ internal static class DashboardHtml
   </style>
 </head>
 <body><main>
-  <div class="top"><div><h1>明星志愿 3 · 实时助手</h1><div class="sub">只读内存模式 · 不修改游戏数据</div></div><div class="top-side"><div class="date" id="date">等待游戏…</div><div class="font-tools"><span>字号</span><button data-font="small" onclick="setFontSize('small')">小</button><button data-font="medium" onclick="setFontSize('medium')">中</button><button data-font="large" onclick="setFontSize('large')">大</button></div></div></div>
+  <div class="top"><div><h1>明星志愿3 · 辅助助手</h1><div class="sub">只读内存模式 · 不修改游戏数据</div></div><div class="top-side"><div class="date" id="date">等待游戏…</div><div class="font-tools"><span>字号</span><button data-font="small" onclick="setFontSize('small')">小</button><button data-font="medium" onclick="setFontSize('medium')">中</button><button data-font="large" onclick="setFontSize('large')">大</button></div></div></div>
   <div class="bar"><span class="dot" id="dot"></span><span class="status" id="status">正在连接 Stardom3.exe</span></div>
   <nav class="tabs"><button class="tab active" data-page="artists">艺人属性<span class="count" id="artistCount">0</span></button><button class="tab" data-page="company">公司概览<span class="count" id="itemCount">0</span></button><button class="tab" data-page="notices">通告<span class="count" id="noticeCount">0</span></button><button class="tab" data-page="reminders">本周提醒<span class="count" id="reminderCount">0</span></button><button class="tab" data-page="events">剧情<span class="count" id="eventCount">0</span></button></nav>
   <div class="card artist-toolbar" id="artistTools"><input id="search" placeholder="搜索艺人姓名或ID"><select id="scope"><option value="signed">仅签约艺人</option><option value="all">全部艺人</option></select></div>
