@@ -113,6 +113,9 @@ internal static class FlySkyEventCatalog
             }
         }
 
+        AddXiaoYiliMemorialReminder(matches, start, end, 2007, "第二年");
+        AddXiaoYiliMemorialReminder(matches, start, end, 2008, "第三年");
+
         for (var year = 2006; year <= 2008; year++)
         {
             var fathersDay = new DateOnly(year, 8, 8);
@@ -185,6 +188,30 @@ internal static class FlySkyEventCatalog
             matches);
     }
 
+    private static void AddXiaoYiliMemorialReminder(
+        List<FlySkyWeekEvent> matches,
+        DateOnly weekStart,
+        DateOnly weekEnd,
+        int year,
+        string gameYear)
+    {
+        var windowStart = new DateOnly(year, 3, 1);
+        var windowEnd = new DateOnly(year, 4, 30);
+        if (windowStart > weekEnd || windowEnd < weekStart) return;
+
+        matches.Add(new FlySkyWeekEvent(
+            "萧依莉",
+            false,
+            false,
+            false,
+            $"30（{gameYear}）",
+            "第一轮剧情（必死）",
+            "场景",
+            "触发过事件18后，于依莉过世周年的三、四月前往公园樱花树下，主角怀念依莉。",
+            $"{gameYear}3月至4月 · 前往公园樱花树下",
+            71));
+    }
+
     private static void AddAdvanceReminder(
         List<FlySkyWeekEvent> matches,
         DateOnly currentDate,
@@ -226,8 +253,18 @@ internal static class FlySkyEventCatalog
             .Single(name => name.EndsWith("Data.flysky-events.json", StringComparison.Ordinal));
         using var stream = assembly.GetManifestResourceStream(resourceName)
             ?? throw new InvalidOperationException("FlySky event data resource is unavailable.");
-        return JsonSerializer.Deserialize<FlySkyCatalog>(stream, JsonOptions.Default)
+        var catalog = JsonSerializer.Deserialize<FlySkyCatalog>(stream, JsonOptions.Default)
             ?? throw new InvalidOperationException("FlySky event data could not be parsed.");
+
+        var artists = catalog.Artists.Select(artist => artist.Name == "萧依莉"
+            ? artist with
+            {
+                Events = artist.Events.Select(item => item.Section == "事件"
+                    ? item with { Section = "第一轮剧情（必死）" }
+                    : item).ToArray()
+            }
+            : artist).ToArray();
+        return catalog with { Artists = artists };
     }
 
     private static bool IsSigningEvent(FlySkyEvent item) =>

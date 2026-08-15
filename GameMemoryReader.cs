@@ -154,15 +154,15 @@ internal sealed class GameMemoryReader : IDisposable
             I32(data, 32) == 0 ? "女" : "男",
             I32(data, 56),
             I32(data, 308),
-            I32(data, 72),
-            I32(data, 76),
-            I32(data, 80),
-            I32(data, 84),
-            I32(data, 88),
-            I32(data, 92),
-            I32(data, 96),
-            I32(data, 100),
-            I32(data, 104),
+            ArtistAbility(data, 72),
+            ArtistAbility(data, 76),
+            ArtistAbility(data, 80),
+            ArtistAbility(data, 84),
+            ArtistAbility(data, 88),
+            ArtistAbility(data, 92),
+            ArtistAbility(data, 96),
+            ArtistAbility(data, 100),
+            ArtistAbility(data, 104),
             I32(data, 108),
             I32(data, 112),
             I32(data, 136),
@@ -173,6 +173,10 @@ internal sealed class GameMemoryReader : IDisposable
             null,
             null);
     }
+
+    // The nine primary abilities are stored with one decimal place of internal
+    // precision. The game UI and notice requirements both display whole points.
+    private static int ArtistAbility(byte[] data, int offset) => I32(data, offset) / 10;
 
     private (Dictionary<int, (int Love, int GiftCount)> Roles,
         List<ProducerSnapshot> Producers) ReadRelationships()
