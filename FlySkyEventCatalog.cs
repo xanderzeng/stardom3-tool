@@ -99,12 +99,20 @@ internal static class FlySkyEventCatalog
                     windowStart <= end && windowEnd >= start);
                 if (window is null) continue;
 
+                // 买药是每半年重复一次的日历任务。每个日期窗口必须拥有独立进度键，
+                // 否则2月勾选完成后，8月会被误判为同一个已完成节点。
+                var eventId = special.Name == "金父与莉铃" &&
+                              item.Section == "买药（重点必做）" &&
+                              item.Id == "4"
+                    ? $"{item.Id}（{window.Start[..7]}）"
+                    : item.Id;
+
                 matches.Add(new FlySkyWeekEvent(
                     special.Name,
                     false,
                     false,
                     true,
-                    item.Id,
+                    eventId,
                     item.Section,
                     item.Kind,
                     item.Text,
