@@ -264,8 +264,65 @@ internal static class FlySkyEventCatalog
                     : item).ToArray()
             }
             : artist).ToArray();
-        return catalog with { Artists = artists };
+        var specialEvents = catalog.SpecialEvents.Select(special => special.Name == "美丽之星"
+            ? ExpandBeautyStarByYear(special)
+            : special).ToArray();
+        var addedBeautyStarEvents = specialEvents
+            .Where(special => special.Name == "美丽之星")
+            .Sum(special => special.EventCount) - catalog.SpecialEvents
+            .Where(special => special.Name == "美丽之星")
+            .Sum(special => special.EventCount);
+        return catalog with
+        {
+            Artists = artists,
+            SpecialEvents = specialEvents,
+            EventCount = catalog.EventCount + addedBeautyStarEvents
+        };
     }
+
+    private static FlySkyArtistEvents ExpandBeautyStarByYear(FlySkyArtistEvents special)
+    {
+        var editions = new[]
+        {
+            new BeautyStarEdition(2006, "第一年", "夏威夷", "仪态200、动感200、自信200", "仪态200、动感200、自信200、演技200、体能200", 450),
+            new BeautyStarEdition(2007, "第二年", "巴黎", "仪态400、动感300、自信400", "仪态500、动感400、自信500、演技400、体能400", 700),
+            new BeautyStarEdition(2008, "第三年", "纽约", "仪态600、动感400、自信600", "仪态800、动感600、自信800、演技600、体能600", 900)
+        };
+        var events = editions.SelectMany(edition => special.Events.Select(item => item with
+        {
+            Section = $"{edition.GameYear}美丽之星（{edition.Year}）",
+            Text = BeautyStarTextForEdition(item, edition),
+            Windows = item.Windows.Where(window =>
+                DateOnly.TryParse(window.Start, out var start) && start.Year == edition.Year).ToArray()
+        })).ToArray();
+
+        return special with
+        {
+            SourceTitle = $"{special.SourceTitle}（按年度拆分）",
+            EventCount = events.Length,
+            Events = events
+        };
+    }
+
+    private static string BeautyStarTextForEdition(FlySkyEvent item, BeautyStarEdition edition) => item.Id switch
+    {
+        "1" => $"{edition.Year}年4月自动发生，“谁是亚洲美丽之星？美丽之星即日起开始接受报名”。",
+        "4" => $"艺人初选结束后当天，秘书收到比赛结果。\n提醒：{edition.GameYear}初选获胜条件：称号必须是模特系列，且在“名模”以上；{edition.PreliminaryRequirements}。",
+        "6" => $"{edition.Year}年7月中旬，“模特界最高荣誉！下个月于{edition.Location}角逐美丽之星年度代表”。",
+        "7" => $"旗下有艺人通过{edition.GameYear}初选，7月最后一个周日，秘书提醒下周就是总决选了。",
+        "8" => $"旗下艺人参加{edition.GameYear}决选当天，前往{edition.Location}，主角为艺人加油打气。",
+        "10" => $"上个事件后，旗下有艺人胜出时，巴黎店长送来600万奖金和告知参加慈善义演的事宜。\n提醒：{edition.GameYear}决选获胜条件：称号必须是模特系列，且在“名模”以上；{edition.FinalRequirements}。",
+        "11" => $"事件10后，艺人进行慈善义演后，且名气达到{edition.FameRequirement}时，“国际媒体一致赞扬，XXX形象清新，慈善义演金额创新高”。",
+        _ => item.Text
+    };
+
+    private sealed record BeautyStarEdition(
+        int Year,
+        string GameYear,
+        string Location,
+        string PreliminaryRequirements,
+        string FinalRequirements,
+        int FameRequirement);
 
     private static bool IsSigningEvent(FlySkyEvent item) =>
         item.Section == "签约方法" || item.Section is "加入A" or "加入B";
