@@ -2,12 +2,12 @@ namespace Stardom3Assistant;
 
 internal static class NoticeRotationCatalog
 {
-    private static readonly DateOnly FirstUpdateWeek = new(2006, 1, 9);
+    private static readonly DateOnly FirstUpdateSunday = new(2006, 1, 8);
 
     public static NoticeRotationSnapshot ForDate(DateOnly currentDate)
     {
-        var daysSinceMonday = ((int)currentDate.DayOfWeek + 6) % 7;
-        var currentWeek = currentDate.AddDays(-daysSinceMonday);
+        var daysSinceSunday = (int)currentDate.DayOfWeek;
+        var currentWeek = currentDate.AddDays(-daysSinceSunday);
         return new NoticeRotationSnapshot(
             CreateWeek(currentWeek),
             CreateWeek(currentWeek.AddDays(7)),
@@ -17,19 +17,19 @@ internal static class NoticeRotationCatalog
     private static NoticeRotationWeek CreateWeek(DateOnly weekStart)
     {
         var weekEnd = weekStart.AddDays(6);
-        var weekIndex = (weekStart.DayNumber - FirstUpdateWeek.DayNumber) / 7;
-        if (weekStart < FirstUpdateWeek)
+        var weekIndex = (weekStart.DayNumber - FirstUpdateSunday.DayNumber) / 7;
+        if (weekStart < FirstUpdateSunday)
             return new NoticeRotationWeek(
                 weekStart.ToString("yyyy-MM-dd"),
                 weekEnd.ToString("yyyy-MM-dd"),
                 "尚未开始",
-                "首次轮换从2006-01-09的广告周开始");
+                "首次轮换于2006-01-08（周日）更新，进入广告周");
 
         return PositiveModulo(weekIndex, 4) switch
         {
             0 => new NoticeRotationWeek(
                 weekStart.ToString("yyyy-MM-dd"), weekEnd.ToString("yyyy-MM-dd"),
-                "广告", weekStart == new DateOnly(2006, 6, 12) ? "追梦广告更新：CD-PRO I 老爸篇" : null),
+                "广告", weekStart == new DateOnly(2006, 6, 11) ? "追梦广告更新：CD-PRO I 老爸篇" : null),
             1 => TelevisionWeek(weekStart, weekEnd, weekIndex),
             2 => new NoticeRotationWeek(
                 weekStart.ToString("yyyy-MM-dd"), weekEnd.ToString("yyyy-MM-dd"),
