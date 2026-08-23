@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.VisualBasic;
 
 namespace Stardom3Assistant;
 
@@ -276,7 +277,8 @@ internal sealed class GameMemoryReader : IDisposable
                 name,
                 ItemTypeName(itemType),
                 ownedCount,
-                DecodeBig5(data.AsSpan(236, 64))));
+                DecodeBig5(data.AsSpan(236, 64)),
+                GiftLookupName(name)));
         }
 
         result.Sort((left, right) =>
@@ -294,6 +296,17 @@ internal sealed class GameMemoryReader : IDisposable
         3 => "事件",
         _ => "未知"
     };
+
+    private static string GiftLookupName(string name)
+    {
+        // StrConv 不支持把 SimplifiedChinese 与 Narrow 组合调用；组合时会返回
+        // 空字符串。先独立转简体，再用 Unicode 兼容标准化处理全角字符。
+        var normalized = Strings.StrConv(name, VbStrConv.SimplifiedChinese, 0) ?? name;
+        if (string.IsNullOrWhiteSpace(normalized)) normalized = name;
+        normalized = normalized.Normalize(NormalizationForm.FormKC);
+        // 游戏物品名与攻略表在这一项存在“养生 / 养身”的用字差异。
+        return normalized.Replace("补脑养生丸", "补脑养身丸", StringComparison.Ordinal);
+    }
 
     private (IReadOnlyList<NoticeSnapshot> Current, IReadOnlyList<NoticeSnapshot> Recruiting) ReadNotices(
         IReadOnlyDictionary<int, string> roleNames,
@@ -615,7 +628,8 @@ internal sealed record CompanyOverviewSnapshot(
     public static CompanyOverviewSnapshot Empty => new("翱翔天际", 0, 0, 0, 0, 0, 0, []);
 }
 
-internal sealed record CompanyItemSnapshot(int Id, string Name, string Type, int Count, string? Effect);
+internal sealed record CompanyItemSnapshot(
+    int Id, string Name, string Type, int Count, string? Effect, string GiftLookupName);
 
 internal sealed record ArtistSnapshot(
     int Id, string Name, string Sex, int Company, int Success,

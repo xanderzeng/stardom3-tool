@@ -19,7 +19,7 @@ internal sealed class AssistantWindow : Form
         _settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Stardom3Assistant");
         _settingsPath = Path.Combine(_settingsDirectory, "window.json");
 
-        Text = "明星志愿3 · 辅助助手 v0.2";
+        Text = "明星志愿3 · 辅助助手 v0.3";
         BackColor = Color.FromArgb(11, 13, 18);
         ForeColor = Color.FromArgb(238, 240, 246);
         StartPosition = FormStartPosition.CenterScreen;
